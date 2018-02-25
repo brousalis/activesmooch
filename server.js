@@ -6,10 +6,14 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const Smooch = require('smooch-core');
+const cors = require('cors');
 
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  pingInterval: 10000,
+  transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling'],
+});
 const PORT = process.env.PORT || 5000;
 const KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
 const SECRET = process.env.REACT_APP_SMOOCH_SECRET;
@@ -21,20 +25,17 @@ const smooch = new Smooch({
   scope: 'app',
 });
 
-io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling']);
-io.set('polling duration', 10);
-io.origins(['https://activesmooch.herokuapp.com/']);
-
 var messagePayload = null;
-// var appUserId = 'a29c4085a9a876086d7c2aec';
-var appUserId = 'default';
+var appUserId = '42ef69a21a6136b0a30974f8';
 
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../build')));
 app.use(bodyParser.json());
 app.use(cors({ origin: '*' }));
-// Answer API requests.
 
+io.origins(['localhost:3000', 'localhost:5000', 'https://activesmooch.herokuapp.com']);
+
+// Answer API requests.
 app.get('/api', function(req, res) {
   console.log('-------------- API');
   res.set('Content-Type', 'application/json');
@@ -149,5 +150,6 @@ server.listen(PORT, function() {
 });
 
 io.on('connection', function(socket) {
-  socket.emit('Socket ready', console.log('Socket ready'));
+  console.log('Client connected');
+  socket.on('disconnect', () => console.log('Client disconnected'));
 });
