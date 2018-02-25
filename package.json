@@ -1,0 +1,41 @@
+{
+  "name": "activesmooch",
+  "version": "0.0.1",
+  "description": "ActiveCampaign + Smooch.io",
+  "author": "Pete Brousalis",
+  "engines": {
+    "node": "8.4.0"
+  },
+  "index": "server.js",
+  "scripts": {
+    "start": "node server",
+    "client": "react-scripts start",
+    "build": "react-scripts build",
+    "dev": "concurrently --names \"server,client\" \"npm start\" \"npm run client\"",
+    "heroku-postbuild": "npm run build"
+  },
+  "cacheDirectories": [
+    "node_modules",
+    "app/node_modules"
+  ],
+  "dependencies": {
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "body-parser": "^1.18.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "smooch": "^4.3.2",
+    "smooch-core": "^4.3.0",
+    "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/brousalis/activesmooch"
+  },
+  "proxy": "http://localhost:5000",
+  "devDependencies": {
+    "concurrently": "^3.5.1",
+    "react-scripts": "latest"
+  }
+}
