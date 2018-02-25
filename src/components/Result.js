@@ -1,33 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
+import Highlight from 'react-highlight';
 
-class Result extends Component {
-  renderHighlight = (data, title, error, errorPayload) => {
-    console.log('-----', data, title, error, errorPayload);
-    if (!error) {
-      if (data) {
-        return (
-          <div className="result">
-            <p>{title}</p>
-            <div>{data}</div>
-          </div>
-        );
-      }
-    } else {
-      return (
-        <div className="result">
-          <p>{title}</p>
-          <div>{errorPayload}</div>
-        </div>
-      );
-    }
-    return;
-  };
-
-  render() {
-    return (
-      <div>{this.renderHighlight(this.props.data, this.props.title, this.props.error, this.props.errorPayload)}</div>
-    );
-  }
-}
-
-export default Result;
+export default ({ data }) => {
+  if (!data) return null;
+  return (
+    <div className="my-3" style={{ height: 400, overflow: 'auto' }}>
+      <Highlight className="JSON">{data}</Highlight>
+    </div>
+  );
+};

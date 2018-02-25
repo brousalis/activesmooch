@@ -1,51 +1,56 @@
 import React, { Component } from 'react';
 import Smooch from 'smooch';
 
-import StartConvo from './StartConvo';
-import PostMessage from './PostMessage';
-import GetAppUser from './GetAppUser';
-
-console.log(process.env);
-const APP_ID = process.env.REACT_APP_SMOOCH_ID;
-const BASE_URL = 'https://api.smooch.io/sdk';
+import SendMessage from './SendMessage';
+import Conversation from './Conversation';
+import GetUser from './GetUser';
 
 class App extends Component {
+  state = {
+    user: null,
+    conversation: null,
+  };
+
   componentDidMount() {
-    Smooch.init({ appId: APP_ID, configBaseUrl: BASE_URL }).then(() => {
+    Smooch.init({
+      appId: process.env.REACT_APP_SMOOCH_ID,
+      configBaseUrl: 'https://api.smooch.io/sdk',
+    }).then(() => {
       Smooch.open();
+    });
+
+    Smooch.on('ready', () => {
+      console.log('smooch init');
+
+      const user = Smooch.getUser();
+      const conversation = Smooch.getConversation();
+
+      this.setState({ user, conversation });
+
+      console.log(user, conversation);
     });
   }
 
   render() {
+    const { user, conversation } = this.state;
+
+    const props = {
+      user,
+      conversation,
+    };
+
     return (
       <div>
-        <section className="bg-primary text-light">
+        <section className="bg-dark text-light">
           <div className="container">
-            <h1 className="display-5 pt-3">ActiveSmooch</h1>
+            <h2 className="py-3">ActiveSmooch</h2>
           </div>
-          <svg
-            className="d-block"
-            style={{ height: '2rem', width: '100%' }}
-            preserveAspectRatio="none"
-            viewBox=" 0 0 100 100"
-          >
-            <polygon fill="#F8F9FB" points="0 100 100 100 100 0" />
-          </svg>
         </section>
-
-        <section className="mt-3">
+        <section className="my-3">
           <div className="container">
-            <div className="row">
-              <div className="col-12 mb-5">
-                <StartConvo />
-              </div>
-              <div className="col-12 mb-5">
-                <PostMessage />
-              </div>
-              <div className="col-12">
-                <GetAppUser />
-              </div>
-            </div>
+            <Conversation {...props} />
+            <GetUser {...props} />
+            <SendMessage {...props} />
           </div>
         </section>
       </div>

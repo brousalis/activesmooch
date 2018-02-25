@@ -1,23 +1,32 @@
 const dotenv = require('dotenv');
-dotenv.config();
-dotenv.load();
-
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const Smooch = require('smooch-core');
 const cors = require('cors');
 
+dotenv.config();
+dotenv.load();
+
+const PORT = process.env.PORT || 5000;
+const KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
+const SECRET = process.env.REACT_APP_SMOOCH_SECRET;
+const APP_ID = process.env.REACT_APP_SMOOCH_ID;
+
+// express server
 const app = express();
+app.use(express.static(path.resolve(__dirname, '../build')));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cors({ origin: '*' }));
+
+// http server
 const server = require('http').Server(app);
 const io = require('socket.io')(server, {
   pingInterval: 10000,
   transports: ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling'],
 });
-const PORT = process.env.PORT || 5000;
-const KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
-const SECRET = process.env.REACT_APP_SMOOCH_SECRET;
-const APP_ID = process.env.REACT_APP_SMOOCH_ID;
+io.origins(['localhost:3000', 'localhost:5000', 'https://activesmooch.herokuapp.com']);
 
 const smooch = new Smooch({
   keyId: KEY_ID,
@@ -25,47 +34,27 @@ const smooch = new Smooch({
   scope: 'app',
 });
 
-var messagePayload = null;
-var appUserId = '42ef69a21a6136b0a30974f8';
+// need to pay for smooch to extend this functionality
+let appUserId = '42ef69a21a6136b0a30974f8';
 
-// Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../build')));
-app.use(bodyParser.json());
-app.use(cors({ origin: '*' }));
-
-io.origins(['localhost:3000', 'localhost:5000', 'https://activesmooch.herokuapp.com']);
-
-// Answer API requests.
-app.get('/api', function(req, res) {
-  console.log('-------------- API');
-  res.set('Content-Type', 'application/json');
-  res.send('{"message":response.appUser._id}');
-});
-
-// POST message by appUser
-app.post('/messages', function(req, res) {
+// api
+app.post('/messages', (req, res) => {
   if (req.body.trigger === 'message:appUser') {
     console.log(req.body);
-    messagePayload = JSON.stringify(req.body, null, 4);
+    const messagePayload = JSON.stringify(req.body, null, 4);
     appUserId = req.body.appUser._id;
     io.emit('message', messagePayload);
     res.sendStatus(200);
   }
 });
 
-// UPDATE appUser
-app.post('/updateappuser', function(req, res) {
-  console.log(req.body);
-
+app.put('/user', (req, res) => {
   smooch.appUsers.update(appUserId, req.body).then(response => {
     res.send(response);
   });
 });
 
-// GET appUser
-app.get('/appuser', function(req, res) {
-  // smooch.appUsers.get('a29c4085a9a876086d7c2aec', 'c7f6e6d6c3a637261bd9656f').then(response => {
-  // console.log(req, res);
+app.get('/user', (req, res) => {
   smooch.appUsers
     .get(appUserId)
     .then(response => {
@@ -79,47 +68,25 @@ app.get('/appuser', function(req, res) {
         statusText: err.response.statusText,
       });
     });
-  // async code
-  // });
 });
 
-// DELETE user profile
-app.get('/deleteuserprofile', function(req, res) {
-  smooch.appUsers
-    .deleteProfile(appUserId)
-    .then(response => {
-      res.send(response);
-    })
-    .catch(err => {
-      console.log('API ERROR:\n', err);
-      res.end();
-    });
-});
-
-// POST message by appMaker
-app.get('/postmessage/message/:message', function(req, res) {
-  var message = req.params.message;
-
-  var messageRequest = {
+app.post('/message', (req, res) => {
+  const message = req.body.message;
+  const request = {
     type: 'text',
     text: message,
     role: 'appMaker',
     metadata: { lang: 'en-ca', items: 3 },
   };
-
-  console.log(messageRequest);
-
-  smooch.appUsers.sendMessage(appUserId, messageRequest).then(response => {
+  smooch.appUsers.sendMessage(appUserId, request).then(response => {
     res.send(response);
   });
 });
 
-// POST message with button by appMaker
-app.get('/postmessage/message/:message/button/:buttonMessage', function(req, res) {
-  var message = req.params.message;
-  var buttonMessage = req.params.buttonMessage;
-
-  messageRequest = {
+app.post('/message/button', (req, res) => {
+  const message = req.params.message;
+  const buttonMessage = req.params.buttonMessage;
+  const request = {
     type: 'text',
     text: message,
     role: 'appMaker',
@@ -133,14 +100,11 @@ app.get('/postmessage/message/:message/button/:buttonMessage', function(req, res
       },
     ],
   };
-  console.log(messageRequest);
-
-  smooch.appUsers.sendMessage(appUserId, messageRequest).then(response => {
+  smooch.appUsers.sendMessage(appUserId, request).then(response => {
     res.send(response);
   });
 });
 
-// All remaining requests return the React app, so it can handle routing.
 app.get('*', function(request, response) {
   response.sendFile(path.resolve(__dirname, './build', 'index.html'));
 });

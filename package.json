@@ -23,6 +23,7 @@
     "express": "^4.16.2",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-highlight": "briancappello/react-highlight#react-v16-compiled",
     "react-scripts": "latest",
     "smooch": "^4.3.2",
     "smooch-core": "^4.3.0",
