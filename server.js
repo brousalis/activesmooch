@@ -11,9 +11,9 @@ const app = express();
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const PORT = process.env.PORT || 5000;
-const KEY_ID = process.env.KEY_ID;
-const SECRET = process.env.SECRET;
-const APP_ID = process.env.REACT_APP_APP_ID;
+const KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
+const SECRET = process.env.REACT_APP_SMOOCH_SECRET;
+const APP_ID = process.env.REACT_APP_SMOOCH_ID;
 
 const smooch = new Smooch({
   keyId: KEY_ID,
@@ -26,7 +26,7 @@ var messagePayload = null;
 var appUserId = 'default';
 
 // Priority serve any static files.
-app.use(express.static(path.resolve(__dirname, '../client/build')));
+app.use(express.static(path.resolve(__dirname, '../build')));
 app.use(bodyParser.json());
 
 // Answer API requests.
@@ -136,7 +136,7 @@ app.get('/postmessage/message/:message/button/:buttonMessage', function(req, res
 
 // All remaining requests return the React app, so it can handle routing.
 app.get('*', function(request, response) {
-  response.sendFile(path.resolve(__dirname, '../client/build', 'index.html'));
+  response.sendFile(path.resolve(__dirname, './build', 'index.html'));
 });
 
 server.listen(PORT, function() {

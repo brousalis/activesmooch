@@ -12,12 +12,9 @@
     "client": "react-scripts start",
     "build": "react-scripts build",
     "dev": "concurrently --names \"server,client\" \"npm start\" \"npm run client\"",
-    "heroku-postbuild": "npm run build"
+    "heroku-postbuild": "npm install && npm run build"
   },
-  "cacheDirectories": [
-    "node_modules",
-    "app/node_modules"
-  ],
+  "cacheDirectories": ["node_modules", "app/node_modules"],
   "dependencies": {
     "dotenv": "^4.0.0",
     "express": "^4.16.2",

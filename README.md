@@ -19,7 +19,7 @@ cd client && npm start
 create `.env` file:
 
 ```
-REACT_APP_APP_ID=
+REACT_APP_SMOOCH_ID=
 KEY_ID=
 SECRET=
 ```
