@@ -6,7 +6,7 @@ import PostMessage from './PostMessage';
 import GetAppUser from './GetAppUser';
 
 console.log(process.env);
-const APP_ID = process.env.REACT_APP_ID;
+const APP_ID = process.env.REACT_APP_SMOOCH_ID;
 const BASE_URL = 'https://api.smooch.io/sdk';
 
 class App extends Component {
