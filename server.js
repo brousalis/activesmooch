@@ -23,6 +23,7 @@ const smooch = new Smooch({
 
 io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling']);
 io.set('polling duration', 10);
+io.origins(['https://activesmooch.herokuapp.com/']);
 
 var messagePayload = null;
 // var appUserId = 'a29c4085a9a876086d7c2aec';
@@ -31,8 +32,9 @@ var appUserId = 'default';
 // Priority serve any static files.
 app.use(express.static(path.resolve(__dirname, '../build')));
 app.use(bodyParser.json());
-
+app.use(cors({ origin: '*' }));
 // Answer API requests.
+
 app.get('/api', function(req, res) {
   console.log('-------------- API');
   res.set('Content-Type', 'application/json');
