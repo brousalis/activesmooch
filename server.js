@@ -21,7 +21,7 @@ const smooch = new Smooch({
   scope: 'app',
 });
 
-io.set('transports', ['xhr-polling']);
+io.set('transports', ['websocket', 'flashsocket', 'htmlfile', 'xhr-polling', 'jsonp-polling', 'polling']);
 io.set('polling duration', 10);
 
 var messagePayload = null;
