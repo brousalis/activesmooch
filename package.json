@@ -11,10 +11,9 @@
     "start": "node server",
     "client": "react-scripts start",
     "build": "react-scripts build",
-    "dev": "concurrently --names \"server,client\" \"npm start\" \"npm run client\"",
-    "heroku-postbuild": "npm install && npm run build"
+    "dev": "concurrently --names \"server,client\" \"npm start\" \"npm run client\""
   },
-  "cacheDirectories": ["node_modules", "app/node_modules"],
+  "cacheDirectories": ["node_modules"],
   "dependencies": {
     "dotenv": "^4.0.0",
     "express": "^4.16.2",

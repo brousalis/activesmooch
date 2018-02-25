@@ -6,20 +6,17 @@
 npm install
 ```
 
-## Run
+## Run locally
 
 ```
-npm start
-```
-
-```
-cd client && npm start
+npm run dev
 ```
 
 create `.env` file:
 
 ```
 REACT_APP_SMOOCH_ID=
-KEY_ID=
-SECRET=
+REACT_APP_KEY_ID=
+REACT_APP_SECRET=
+REACT_APP_API_URL=
 ```
