@@ -21,6 +21,9 @@ const smooch = new Smooch({
   scope: 'app',
 });
 
+io.set('transports', ['xhr-polling']);
+io.set('polling duration', 10);
+
 var messagePayload = null;
 // var appUserId = 'a29c4085a9a876086d7c2aec';
 var appUserId = 'default';
