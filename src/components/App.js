@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Smooch from 'smooch';
 
-import SendMessage from './SendMessage';
 import Conversation from './Conversation';
 import GetUser from './GetUser';
 
@@ -12,6 +11,7 @@ class App extends Component {
   };
 
   componentDidMount() {
+    // init smooch for 'user'
     Smooch.init({
       appId: process.env.REACT_APP_SMOOCH_ID,
       configBaseUrl: 'https://api.smooch.io/sdk',
@@ -20,14 +20,18 @@ class App extends Component {
     });
 
     Smooch.on('ready', () => {
-      console.log('smooch init');
-
+      // grab initial user/convo
       const user = Smooch.getUser();
       const conversation = Smooch.getConversation();
-
       this.setState({ user, conversation });
 
-      console.log(user, conversation);
+      // webhook for conversations
+      Smooch.on('message', message => {
+        console.log('message');
+        const { conversation } = this.state;
+        conversation.messages.push(message);
+        this.setState({ conversation });
+      });
     });
   }
 
@@ -49,8 +53,7 @@ class App extends Component {
         <section className="my-3">
           <div className="container">
             <Conversation {...props} />
-            <GetUser {...props} />
-            <SendMessage {...props} />
+            <GetUser />
           </div>
         </section>
       </div>

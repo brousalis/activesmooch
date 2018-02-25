@@ -12,26 +12,23 @@ class GetUser extends Component {
     fetch('/user')
       .then(response => response.json())
       .then(data => {
-        if (data.status && data.status !== 200) {
-          if (data.error) {
-            this.setState({ error: data.error });
-          }
-        } else {
-          this.setState({
-            payload: JSON.stringify(data.appUser, null, 2),
-            error: false,
-          });
-        }
+        this.setState({
+          payload: JSON.stringify(data.appUser, null, 2),
+          error: false,
+        });
       })
       .catch(e => {
         console.log(e);
-        this.setState({ errorPayload: `HTTP request failed: ${e}`, error: true });
+        this.setState({
+          errorPayload: `HTTP request failed: ${e}`,
+          error: true,
+        });
       });
   };
 
   render() {
     return (
-      <div>
+      <div className="my-3">
         <button className="btn btn-primary" onClick={this.getAppUser}>
           Get User
         </button>
