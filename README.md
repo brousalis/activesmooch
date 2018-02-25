@@ -12,11 +12,14 @@ npm install
 npm run dev
 ```
 
-create `.env` file:
+server
 
 ```
-REACT_APP_SMOOCH_ID=
-REACT_APP_KEY_ID=
-REACT_APP_SECRET=
-REACT_APP_API_URL=
+npm start
+```
+
+client
+
+```
+npm run client
 ```

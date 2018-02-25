@@ -9,7 +9,7 @@ class GetUser extends Component {
   };
 
   getAppUser = () => {
-    fetch('/user')
+    fetch('/api/user')
       .then(response => response.json())
       .then(data => {
         this.setState({

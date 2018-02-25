@@ -22,7 +22,7 @@ const smooch = new Smooch({
 // express server
 const app = express();
 const server = require('http').Server(app);
-app.use(express.static(path.resolve(__dirname, '../build')));
+app.use(express.static(path.resolve(__dirname, './build')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: '*' }));
@@ -30,7 +30,7 @@ app.use(cors({ origin: '*' }));
 // need to pay for smooch to extend this functionality
 let appUserId = '42ef69a21a6136b0a30974f8';
 
-app.get('/user', (req, res) => {
+app.get('/api/user', (req, res) => {
   smooch.appUsers
     .get(appUserId)
     .then(response => {
@@ -46,7 +46,7 @@ app.get('/user', (req, res) => {
     });
 });
 
-app.post('/message', (req, res) => {
+app.post('/api/message', (req, res) => {
   const message = req.body.message;
   const request = {
     type: 'text',

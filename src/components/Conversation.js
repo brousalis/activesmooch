@@ -19,7 +19,7 @@ class Conversation extends Component {
   postMessage = () => {
     const { message } = this.state;
 
-    fetch('/message', {
+    fetch('/api/message', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ message }),
