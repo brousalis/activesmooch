@@ -21,7 +21,11 @@ class GetUser extends Component {
   };
 
   render() {
+    const { user } = this.props;
     const { payload, error } = this.state;
+
+    if (!user) return null;
+
     return (
       <div className="my-3">
         <button className="btn btn-primary" onClick={this.getAppUser}>

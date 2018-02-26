@@ -11,11 +11,12 @@
     "start": "node server",
     "client": "react-scripts start",
     "build": "react-scripts build",
-    "dev":
-      "concurrently --names \"server,client\" \"npm start\" \"npm run client\"",
+    "dev": "concurrently --names \"server,client\" \"npm start\" \"npm run client\"",
     "heroku-postbuild": "npm run build"
   },
-  "cacheDirectories": ["node_modules"],
+  "cacheDirectories": [
+    "node_modules"
+  ],
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",

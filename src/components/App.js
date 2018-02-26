@@ -4,6 +4,8 @@ import Smooch from 'smooch';
 import Conversation from './Conversation';
 import GetUser from './GetUser';
 
+const appId = process.env.REACT_APP_SMOOCH_ID;
+
 class App extends Component {
   state = {
     user: null,
@@ -11,36 +13,44 @@ class App extends Component {
   };
 
   componentDidMount() {
-    // init smooch for 'user'
-    Smooch.init({
-      appId: process.env.REACT_APP_SMOOCH_ID,
-      // configBaseUrl: 'https://api.smooch.io/sdk',
-    }).then(() => {
+    // init smooch for 'user' and open the window
+    Smooch.init({ appId }).then(() => {
       Smooch.open();
     });
 
     Smooch.on('ready', () => {
       // grab initial user/convo
-      let user = Smooch.getUser();
+      const user = Smooch.getUser();
 
       if (!user) {
         Smooch.sendMessage('hello world');
+      } else {
+        this.updateConversation();
       }
-
-      user = Smooch.getUser();
-      const conversation = Smooch.getConversation();
-
-      this.setState({ user, conversation });
 
       // webhook for conversations
       Smooch.on('message', message => {
-        const { conversation } = this.state;
-        const user = Smooch.getUser();
-        conversation.messages.push(message);
-        this.setState({ user, conversation });
+        // this.updateCampaign(message);
+        this.updateConversation();
       });
     });
   }
+
+  updateCampaign = message => {
+    // will need a better API endpoint, `messages` doesn't fit the needs
+    const { userId } = this.props.user._id;
+    fetch('/api/campaign', {
+      method: 'post',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, userId }),
+    });
+  };
+
+  updateConversation = () => {
+    const user = Smooch.getUser();
+    const conversation = Smooch.getConversation();
+    this.setState({ user, conversation });
+  };
 
   render() {
     const { user, conversation } = this.state;

@@ -9,15 +9,21 @@ dotenv.config();
 dotenv.load();
 
 const PORT = process.env.PORT || 5000;
-const KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
-const SECRET = process.env.REACT_APP_SMOOCH_SECRET;
-const APP_ID = process.env.REACT_APP_SMOOCH_ID;
+const SMOOCH_KEY_ID = process.env.REACT_APP_SMOOCH_KEY_ID;
+const SMOOCH_SECRET = process.env.REACT_APP_SMOOCH_SECRET;
+const AC_API_URL = process.env.AC_API_URL;
+const AC_API_KEY = process.env.AC_API_KEY;
 
 const smooch = new Smooch({
-  keyId: KEY_ID,
-  secret: SECRET,
+  keyId: SMOOCH_KEY_ID,
+  secret: SMOOCH_SECRET,
   scope: 'app',
 });
+
+// activecampaign api url
+function acUrl(action) {
+  return `${AC_API_URL}/admin/api.php?api_key=${AC_API_KEY}&api_output=json&api_action=${action}`;
+}
 
 // express server
 const app = express();
@@ -27,6 +33,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: '*' }));
 
+// GET smooch appuser
 app.get('/api/user/:userId', (req, res) => {
   const userId = req.params.userId;
   if (!userId) return;
@@ -45,6 +52,7 @@ app.get('/api/user/:userId', (req, res) => {
     });
 });
 
+// POST smooch message
 app.post('/api/message', (req, res) => {
   const message = req.body.message;
   const userId = req.body.userId;
@@ -61,6 +69,38 @@ app.post('/api/message', (req, res) => {
   smooch.appUsers.sendMessage(userId, request).then(response => {
     res.send(response);
   });
+});
+
+// POST activecampaign email message
+app.post('/api/campaign', (req, res) => {
+  const message = req.body.message;
+  const userId = req.body.userId;
+  if (!userId) return;
+  const request = {
+    api_key: AC_API_KEY,
+    api_action: 'message_add',
+    api_output: 'json',
+    subject: 'Smooch Chat Message',
+    fromemail: 'test@example.com',
+    fromname: 'Test Smooch',
+    reply2: 'test@example.com',
+    priority: '1',
+    charset: 'utf8',
+    encoding: 'quoted-printable',
+    textconstructor: 'editor',
+    text: message,
+    'p[1]': '1',
+  };
+
+  fetch(acUrl('message_add'), {
+    method: 'post',
+    body: new URLSearchParams(new FormData(request)),
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  })
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => [console.log('err', err)]);
 });
 
 app.get('*', function(request, response) {
