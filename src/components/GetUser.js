@@ -9,7 +9,7 @@ class GetUser extends Component {
 
   getAppUser = () => {
     const userId = this.props.user._id;
-    fetch('/api/user', { body: JSON.stringify({ userId }) })
+    fetch(`/api/user/${userId}`)
       .then(response => response.json())
       .then(data => {
         this.setState({

@@ -27,8 +27,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: '*' }));
 
-app.get('/api/user', (req, res) => {
-  const userId = req.body.userId;
+app.get('/api/user/:userId', (req, res) => {
+  const userId = req.params.userId;
   if (!userId) return;
   smooch.appUsers
     .get(userId)
