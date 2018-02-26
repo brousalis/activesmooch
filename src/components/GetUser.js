@@ -4,12 +4,12 @@ import Result from './Result.js';
 class GetUser extends Component {
   state = {
     payload: null,
-    errorPayload: null,
     error: false,
   };
 
   getAppUser = () => {
-    fetch('/api/user')
+    const userId = this.props.user._id;
+    fetch('/api/user', { body: JSON.stringify({ userId }) })
       .then(response => response.json())
       .then(data => {
         this.setState({
@@ -17,27 +17,17 @@ class GetUser extends Component {
           error: false,
         });
       })
-      .catch(e => {
-        console.log(e);
-        this.setState({
-          errorPayload: `HTTP request failed: ${e}`,
-          error: true,
-        });
-      });
+      .catch(e => this.setState({ error: e }));
   };
 
   render() {
+    const { payload, error } = this.state;
     return (
       <div className="my-3">
         <button className="btn btn-primary" onClick={this.getAppUser}>
           Get User
         </button>
-        <Result
-          data={this.state.payload}
-          title="User payload: "
-          error={this.state.error}
-          errorPayload={this.state.errorPayload}
-        />
+        <Result data={payload || error} />
       </div>
     );
   }

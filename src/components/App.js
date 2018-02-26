@@ -14,23 +14,30 @@ class App extends Component {
     // init smooch for 'user'
     Smooch.init({
       appId: process.env.REACT_APP_SMOOCH_ID,
-      configBaseUrl: 'https://api.smooch.io/sdk',
+      // configBaseUrl: 'https://api.smooch.io/sdk',
     }).then(() => {
       Smooch.open();
     });
 
     Smooch.on('ready', () => {
       // grab initial user/convo
-      const user = Smooch.getUser();
+      let user = Smooch.getUser();
+
+      if (!user) {
+        Smooch.sendMessage('hello world');
+      }
+
+      user = Smooch.getUser();
       const conversation = Smooch.getConversation();
+
       this.setState({ user, conversation });
 
       // webhook for conversations
       Smooch.on('message', message => {
-        console.log('message');
         const { conversation } = this.state;
+        const user = Smooch.getUser();
         conversation.messages.push(message);
-        this.setState({ conversation });
+        this.setState({ user, conversation });
       });
     });
   }
@@ -53,7 +60,7 @@ class App extends Component {
         <section className="my-3">
           <div className="container">
             <Conversation {...props} />
-            <GetUser />
+            <GetUser {...props} />
           </div>
         </section>
       </div>

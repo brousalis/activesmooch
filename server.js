@@ -27,12 +27,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors({ origin: '*' }));
 
-// need to pay for smooch to extend this functionality
-let appUserId = '42ef69a21a6136b0a30974f8';
-
 app.get('/api/user', (req, res) => {
+  const userId = req.body.userId;
+  if (!userId) return;
   smooch.appUsers
-    .get(appUserId)
+    .get(userId)
     .then(response => {
       res.json(response);
     })
@@ -48,6 +47,8 @@ app.get('/api/user', (req, res) => {
 
 app.post('/api/message', (req, res) => {
   const message = req.body.message;
+  const userId = req.body.userId;
+  if (!userId) return;
   const request = {
     type: 'text',
     text: message,
@@ -57,7 +58,7 @@ app.post('/api/message', (req, res) => {
     role: 'appMaker',
     metadata: { lang: 'en-ca', items: 3 },
   };
-  smooch.appUsers.sendMessage(appUserId, request).then(response => {
+  smooch.appUsers.sendMessage(userId, request).then(response => {
     res.send(response);
   });
 });

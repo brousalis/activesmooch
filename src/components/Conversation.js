@@ -9,7 +9,7 @@ class Conversation extends Component {
   };
 
   componentDidUpdate() {
-    this.scrollToBottom();
+    if (this.props.user) this.scrollToBottom();
   }
 
   scrollToBottom = () => {
@@ -18,11 +18,12 @@ class Conversation extends Component {
 
   postMessage = () => {
     const { message } = this.state;
+    const userId = this.props.user._id;
 
     fetch('/api/message', {
       method: 'post',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ message, userId }),
     }).catch(e => {
       this.setState({ error: `API call failed: ${e}` });
     });
